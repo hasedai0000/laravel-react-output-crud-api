@@ -18,4 +18,18 @@ app/
 │   └── Repositories/     # データアクセスの実装
 ├── Models/               # Eloquentモデル（シンプルなDBマッピング）
 
+## OpenAPI（Swagger）の導入
 
+Scramble を採用
+※API 仕様書をコードから自動生成してくれるツール。詳しくは以下の URL 参照
+https://scramble.dedoc.co/usage/getting-started
+
+```bash
+docker compose run --rm app composer require dedoc/scramble
+```
+
+設定ファイルの追加
+
+```bash
+docker compose exec app php artisan vendor:publish --provider="Dedoc\Scramble\ScrambleServiceProvider" --tag="scramble-config"
+```
