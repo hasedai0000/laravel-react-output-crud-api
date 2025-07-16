@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Domain\Todo\Repositories\TodoRepositoryInterface;
+use App\Infrastructure\Repositories\EloquentTodoRepository;
 use Dedoc\Scramble\Scramble;
 use Dedoc\Scramble\Support\Generator\OpenApi;
 use Dedoc\Scramble\Support\Generator\SecurityScheme;
@@ -15,7 +17,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->bind(
+            TodoRepositoryInterface::class,
+            EloquentTodoRepository::class
+        );
     }
 
     /**
