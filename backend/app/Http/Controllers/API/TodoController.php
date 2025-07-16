@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Api\BaseController;
 use App\Application\Services\TodoService;
+use App\Http\Requests\Todo\TodoStoreRequest;
 use Illuminate\Http\Request;
 
 class TodoController extends BaseController
@@ -30,11 +31,30 @@ class TodoController extends BaseController
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Todoを作成
+     * 
+     * @param TodoStoreRequest $request
+     * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(TodoStoreRequest $request)
     {
-        //
+        try {
+            // バリデーション済みデータの取得
+            $validatedData = $request->validated();
+
+            // アプリケーションサービスにロジックを委譲
+            $todo = $this->todoService->createTodo(
+                $validatedData['user_id'],
+                $validatedData['title'],
+                $validatedData['content']
+            );
+
+            $success['todo'] = $todo->toArray();
+
+            return $this->sendResponse($success, 'Todoを作成しました');
+        } catch (\Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
     }
 
     /**

@@ -8,18 +8,17 @@ use App\Domain\Todo\ValueObjects\TodoTitle;
 
 class Todo
 {
-  protected $id;
-  protected $user_id;
-  protected $title;
-  protected $content;
-  protected $status;
+  private $id;
+  private $user_id;
+  private $title;
+  private $content;
+  private $status;
 
   public function __construct(
-    ?int $id,
+    string $id,
     int $user_id,
-    string $title,
-    string $content,
-    ?bool $status
+    TodoTitle $title,
+    TodoContent $content
   ) {
     $this->id = $id;
     $this->user_id = $user_id;
@@ -28,7 +27,7 @@ class Todo
     $this->status = TodoStatus::incomplete();
   }
 
-  public function getId(): int
+  public function getId(): string
   {
     return $this->id;
   }
@@ -53,29 +52,19 @@ class Todo
     return $this->status;
   }
 
-  public function setTitle(string $title): void
-  {
-    $this->title = $title;
-  }
-
-  public function setContent(string $content): void
-  {
-    $this->content = $content;
-  }
-
-  public function setStatus(bool $status): void
-  {
-    $this->status = $status;
-  }
-
-  public function jsonSerialize(): array
+  /**
+   * エンティティを配列形式に変換
+   * 
+   * @return array
+   */
+  public function toArray(): array
   {
     return [
-      'id' => $this->getId(),
-      'user_id' => $this->getUserId(),
-      'title' => $this->getTitle(),
-      'content' => $this->getContent(),
-      'status' => $this->getStatus(),
+      'id' => $this->id,
+      'user_id' => $this->user_id,
+      'title' => $this->title->value(),
+      'content' => $this->content->value(),
+      'status' => $this->status->value(),
     ];
   }
 }

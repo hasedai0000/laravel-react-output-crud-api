@@ -157,15 +157,15 @@ docker compose exec app php artisan view:cache
 #### コントローラの作成
 
 ```bash
-docker compose run --rm app php artisan make:controller API/TaskController --api
+docker compose run --rm app php artisan make:controller Api/TaskController --api
 ```
 
-backend/app/Http/Controllers/API/TaskController.php を編集
+backend/app/Http/Controllers/Api/TaskController.php を編集
 
 ```php
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -199,7 +199,7 @@ backend/routes/api.php を編集
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\API\TaskController;
+use App\Http\Controllers\Api\TaskController;
 
 // ユーザー情報取得のルート
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

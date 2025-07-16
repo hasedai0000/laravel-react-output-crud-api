@@ -3,6 +3,10 @@
 namespace App\Application\Services;
 
 use App\Domain\Todo\Repositories\TodoRepositoryInterface;
+use App\Domain\Todo\Entities\Todo as TodoEntity;
+use App\Domain\Todo\ValueObjects\TodoTitle;
+use App\Domain\Todo\ValueObjects\TodoContent;
+use Illuminate\Support\Str;
 
 class TodoService
 {
@@ -32,5 +36,31 @@ class TodoService
       ];
     }, $todos);
     return $todos;
+  }
+
+  /**
+   * Todoを作成
+   * 
+   * @param int $user_id
+   * @param string $title
+   * @param string $content
+   * @return TodoEntity
+   */
+  public function createTodo(int $user_id, string $title, string $content): TodoEntity
+  {
+    $todoTitle = new TodoTitle($title);
+    $todoContent = new TodoContent($content);
+
+    $todo = new TodoEntity(
+      Str::uuid()->toString(),
+      $user_id,
+      $todoTitle,
+      $todoContent
+    );
+
+    // リポジトリを使用して永続化
+    $this->todoRepository->save($todo);
+
+    return $todo;
   }
 }

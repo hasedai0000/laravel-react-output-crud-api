@@ -2,6 +2,8 @@
 
 namespace Tests\Feature\Http\Controllers\Api;
 
+use App\Domain\Todo\ValueObjects\TodoContent;
+use App\Domain\Todo\ValueObjects\TodoTitle;
 use App\Models\Todo;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -21,7 +23,7 @@ class TodoControllerTest extends TestCase
   ];
 
   private const TEST_TODO = [
-    'id' => 1,
+    'id' => "12345678910",
     'user_id' => 1,
     'title' => 'testTitle',
     'content' => 'testContent',
@@ -72,5 +74,32 @@ class TodoControllerTest extends TestCase
     ]);
 
     $this->assertSuccessResponse($response->json(), ['todos' => [self::TEST_TODO]], 'Todoの一覧を取得しました');
+  }
+
+  #[Test]
+  public function testStoreSuccess(): void
+  {
+    $response = $this->postJson('api/todos', [
+      'user_id' => $this->user->id,
+      'title' => self::TEST_TODO['title'],
+      'content' => self::TEST_TODO['content'],
+    ])->assertStatus(200)
+      ->assertJsonStructure([
+        'success',
+        'data' => ['todo'],
+        'message',
+      ]);
+
+    $this->assertSuccessResponse(
+      $response->json(),
+      ['todo' => [
+        'id' => $response->json('data.todo.id'),
+        'user_id' => $this->user->id,
+        'title' => self::TEST_TODO['title'],
+        'content' => self::TEST_TODO['content'],
+        'status' => self::TEST_TODO['status'],
+      ]],
+      'Todoを作成しました'
+    );
   }
 }

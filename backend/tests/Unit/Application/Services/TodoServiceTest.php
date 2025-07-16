@@ -26,8 +26,8 @@ class TodoServiceTest extends TestCase
   ];
 
   private const TEST_TODO = [
-    'id' => 1,
-    'user_id' => 1,
+    'id' => "12345678910",
+    'user_id' => self::TEST_USER['id'],
     'title' => 'test_title',
     'content' => 'test_content',
     'status' => 'incomplete',
@@ -66,6 +66,7 @@ class TodoServiceTest extends TestCase
     ]);
 
     $todo = Todo::factory()->create([
+      'id' => self::TEST_TODO['id'],
       'user_id' => $user->id,
       'title' => self::TEST_TODO['title'],
       'content' => self::TEST_TODO['content'],
@@ -74,7 +75,7 @@ class TodoServiceTest extends TestCase
 
     $expected = [
       [
-        'id' => $todo->id,
+        'id' => self::TEST_TODO['id'],
         'user_id' => $user->id,
         'title' => $todo->title,
         'content' => $todo->content,
