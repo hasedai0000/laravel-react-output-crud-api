@@ -38,4 +38,23 @@ class EloquentTodoRepository implements TodoRepositoryInterface
 
     $eloquentTodo->save();
   }
+
+  /**
+   * Todoを取得
+   * 
+   * @param string $todo_id
+   * @return TodoEntity
+   */
+  public function findById(string $todo_id): ?TodoEntity
+  {
+    $eloquentTodo = Todo::findOrFail($todo_id);
+
+    return new TodoEntity(
+      $eloquentTodo->id,
+      $eloquentTodo->user_id,
+      new TodoTitle($eloquentTodo->title),
+      new TodoContent($eloquentTodo->content),
+      new TodoStatus($eloquentTodo->status)
+    );
+  }
 }

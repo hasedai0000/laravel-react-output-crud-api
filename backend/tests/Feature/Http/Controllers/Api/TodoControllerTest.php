@@ -23,7 +23,6 @@ class TodoControllerTest extends TestCase
   ];
 
   private const TEST_TODO = [
-    'id' => "12345678910",
     'user_id' => 1,
     'title' => 'testTitle',
     'content' => 'testContent',
@@ -43,7 +42,6 @@ class TodoControllerTest extends TestCase
       'password' => self::TEST_USER['password'],
     ]);
     $this->todo = Todo::factory()->create([
-      'id' => self::TEST_TODO['id'],
       'user_id' => self::TEST_TODO['user_id'],
       'title' => self::TEST_TODO['title'],
       'content' => self::TEST_TODO['content'],
@@ -73,7 +71,19 @@ class TodoControllerTest extends TestCase
       'message',
     ]);
 
-    $this->assertSuccessResponse($response->json(), ['todos' => [self::TEST_TODO]], 'Todoの一覧を取得しました');
+    $this->assertSuccessResponse(
+      $response->json(),
+      ['todos' => [
+        [
+          'id' => $this->todo->id,
+          'user_id' => $this->todo->user_id,
+          'title' => $this->todo->title,
+          'content' => $this->todo->content,
+          'status' => $this->todo->status,
+        ]
+      ]],
+      'Todoの一覧を取得しました'
+    );
   }
 
   #[Test]
@@ -100,6 +110,30 @@ class TodoControllerTest extends TestCase
         'status' => self::TEST_TODO['status'],
       ]],
       'Todoを作成しました'
+    );
+  }
+
+  #[Test]
+  public function testShowSuccess(): void
+  {
+    $response = $this->getJson('api/todos/' . $this->todo->id)
+      ->assertStatus(200)
+      ->assertJsonStructure([
+        'success',
+        'data' => ['todo'],
+        'message',
+      ]);
+
+    $this->assertSuccessResponse(
+      $response->json(),
+      ['todo' => [
+        'id' => $this->todo->id,
+        'user_id' => $this->todo->user_id,
+        'title' => $this->todo->title,
+        'content' => $this->todo->content,
+        'status' => $this->todo->status,
+      ]],
+      'Todoを取得しました'
     );
   }
 }

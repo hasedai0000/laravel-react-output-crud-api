@@ -8,4 +8,5 @@ interface TodoRepositoryInterface
 {
  public function findAll(): array;
  public function save(TodoEntity $todo): void;
+ public function findById(string $todo_id): ?TodoEntity;
 }

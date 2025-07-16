@@ -27,4 +27,7 @@ Route::get('/tasks', [TaskController::class, 'index']);
 Route::controller(TodoController::class)->group(function () {
     Route::get('/todos', 'index')->name('todos.index');
     Route::post('/todos', 'store')->name('todos.store');
+    Route::get('/todos/{id}', 'show')->name('todos.show');
+    Route::put('/todos/{id}', 'update')->name('todos.update');
+    Route::delete('/todos/{id}', 'destroy')->name('todos.destroy');
 });

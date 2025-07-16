@@ -58,11 +58,22 @@ class TodoController extends BaseController
     }
 
     /**
-     * Display the specified resource.
+     * Todoを取得
+     * 
+     * @param string $id
+     * @return \Illuminate\Http\Response
      */
     public function show(string $id)
     {
-        //
+        $todo = $this->todoService->getTodo($id);
+
+        if (!$todo) {
+            return $this->sendError('Todoが見つかりません');
+        }
+
+        $success['todo'] = $todo->toArray();
+
+        return $this->sendResponse($success, 'Todoを取得しました');
     }
 
     /**

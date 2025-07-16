@@ -63,4 +63,15 @@ class TodoService
 
     return $todo;
   }
+
+  /**
+   * Todoを取得
+   * 
+   * @param string $id
+   * @return TodoEntity
+   */
+  public function getTodo(string $todo_id): ?TodoEntity
+  {
+    return $this->todoRepository->findById($todo_id);
+  }
 }
