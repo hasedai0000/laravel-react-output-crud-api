@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\API\TaskController;
+use App\Http\Controllers\API\TodoController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -20,5 +21,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-// タスク一覧取得のルート
+// タスク一覧取得のルート（サンプル）
 Route::get('/tasks', [TaskController::class, 'index']);
+
+Route::controller(TodoController::class)->group(function () {
+    Route::get('/todos', 'index')->name('todos.index');
+});
