@@ -52,6 +52,21 @@ class Todo
     return $this->status;
   }
 
+  public function setTitle(TodoTitle $title): void
+  {
+    $this->title = $title;
+  }
+
+  public function setContent(TodoContent $content): void
+  {
+    $this->content = $content;
+  }
+
+  public function setStatus(TodoStatus $status): void
+  {
+    $this->status = $status;
+  }
+
   /**
    * エンティティを配列形式に変換
    * 

@@ -6,6 +6,7 @@ use App\Domain\Todo\Repositories\TodoRepositoryInterface;
 use App\Domain\Todo\Entities\Todo as TodoEntity;
 use App\Domain\Todo\ValueObjects\TodoTitle;
 use App\Domain\Todo\ValueObjects\TodoContent;
+use App\Domain\Todo\ValueObjects\TodoStatus;
 use Illuminate\Support\Str;
 
 class TodoService
@@ -73,5 +74,34 @@ class TodoService
   public function getTodo(string $todo_id): ?TodoEntity
   {
     return $this->todoRepository->findById($todo_id);
+  }
+
+  /**
+   * Todoを更新
+   * 
+   * @param string $id
+   * @param string $title
+   * @param string $content
+   * @param string $status
+   * @return TodoEntity|null
+   */
+  public function updateTodo(string $id, string $title, string $content, string $status): ?TodoEntity
+  {
+    $todoTitle = new TodoTitle($title);
+    $todoContent = new TodoContent($content);
+    $todoStatus = new TodoStatus($status);
+
+    $todo = $this->todoRepository->findById($id);
+
+    if (!$todo) {
+      return null;
+    }
+
+    $todo->setTitle($todoTitle);
+    $todo->setContent($todoContent);
+    $todo->setStatus($todoStatus);
+
+    $this->todoRepository->save($todo);
+    return $todo;
   }
 }

@@ -29,25 +29,40 @@ class EloquentTodoRepository implements TodoRepositoryInterface
    */
   public function save(TodoEntity $todo): void
   {
-    $eloquentTodo = new Todo();
-    $eloquentTodo->id = $todo->getId();
-    $eloquentTodo->user_id = $todo->getUserId();
-    $eloquentTodo->title = $todo->getTitle()->value();
-    $eloquentTodo->content = $todo->getContent()->value();
-    $eloquentTodo->status = $todo->getStatus()->value();
+    $eloquentTodo = Todo::find($todo->getId());
 
-    $eloquentTodo->save();
+    if ($eloquentTodo) {
+      // 更新
+      $eloquentTodo->user_id = $todo->getUserId();
+      $eloquentTodo->title = $todo->getTitle()->value();
+      $eloquentTodo->content = $todo->getContent()->value();
+      $eloquentTodo->status = $todo->getStatus()->value();
+      $eloquentTodo->save();
+    } else {
+      // 新規作成
+      $eloquentTodo = new Todo();
+      $eloquentTodo->id = $todo->getId();
+      $eloquentTodo->user_id = $todo->getUserId();
+      $eloquentTodo->title = $todo->getTitle()->value();
+      $eloquentTodo->content = $todo->getContent()->value();
+      $eloquentTodo->status = $todo->getStatus()->value();
+      $eloquentTodo->save();
+    }
   }
 
   /**
    * Todoを取得
    * 
    * @param string $todo_id
-   * @return TodoEntity
+   * @return TodoEntity|null
    */
   public function findById(string $todo_id): ?TodoEntity
   {
-    $eloquentTodo = Todo::findOrFail($todo_id);
+    $eloquentTodo = Todo::find($todo_id);
+
+    if (!$eloquentTodo) {
+      return null;
+    }
 
     return new TodoEntity(
       $eloquentTodo->id,

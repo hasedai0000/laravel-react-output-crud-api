@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Api\BaseController;
 use App\Application\Services\TodoService;
 use App\Http\Requests\Todo\TodoStoreRequest;
+use App\Http\Requests\Todo\TodoUpdateRequest;
 use Illuminate\Http\Request;
 
 class TodoController extends BaseController
@@ -79,9 +80,30 @@ class TodoController extends BaseController
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(TodoUpdateRequest $request, string $id)
     {
-        //
+        try {
+            // バリデーション済みデータの取得
+            $validatedData = $request->validated();
+
+            // アプリケーションサービスにロジックを委譲
+            $todo = $this->todoService->updateTodo(
+                $id,
+                $validatedData['title'],
+                $validatedData['content'],
+                $validatedData['status'],
+            );
+
+            if (!$todo) {
+                return $this->sendError('Todoが見つかりません');
+            }
+
+            $success['todo'] = $todo->toArray();
+
+            return $this->sendResponse($success, 'Todoを更新しました');
+        } catch (\Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
     }
 
     /**

@@ -136,4 +136,31 @@ class TodoControllerTest extends TestCase
       'Todoを取得しました'
     );
   }
+
+  #[Test]
+  public function testUpdateSuccess(): void
+  {
+    $response = $this->putJson('api/todos/' . $this->todo->id, [
+      'title' => 'new_title',
+      'content' => 'new_content',
+      'status' => 'complete',
+    ])->assertStatus(200)
+      ->assertJsonStructure([
+        'success',
+        'data' => ['todo'],
+        'message',
+      ]);
+
+    $this->assertSuccessResponse(
+      $response->json(),
+      ['todo' => [
+        'id' => $this->todo->id,
+        'user_id' => $this->todo->user_id,
+        'title' => 'new_title',
+        'content' => 'new_content',
+        'status' => 'complete',
+      ]],
+      'Todoを更新しました'
+    );
+  }
 }

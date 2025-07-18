@@ -5,6 +5,9 @@ namespace Tests\Unit\Application\Services;
 use App\Application\Services\TodoService;
 use App\Domain\Todo\Entities\Todo as TodoEntity;
 use App\Domain\Todo\Repositories\TodoRepositoryInterface;
+use App\Domain\Todo\ValueObjects\TodoContent;
+use App\Domain\Todo\ValueObjects\TodoStatus;
+use App\Domain\Todo\ValueObjects\TodoTitle;
 use App\Models\Todo;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -49,6 +52,22 @@ class TodoServiceTest extends TestCase
             'status' => self::TEST_TODO['status'],
           ]
         ]);
+
+        $mock->shouldReceive('findById')->andReturn(new TodoEntity(
+          self::TEST_TODO['id'],
+          self::TEST_TODO['user_id'],
+          new TodoTitle(self::TEST_TODO['title']),
+          new TodoContent(self::TEST_TODO['content']),
+          new TodoStatus(self::TEST_TODO['status']),
+        ));
+
+        $mock->shouldReceive('save')->andReturn(new TodoEntity(
+          self::TEST_TODO['id'],
+          self::TEST_TODO['user_id'],
+          new TodoTitle(self::TEST_TODO['title']),
+          new TodoContent(self::TEST_TODO['content']),
+          new TodoStatus(self::TEST_TODO['status']),
+        ));
       }
     );
 
@@ -85,5 +104,94 @@ class TodoServiceTest extends TestCase
 
     $todos = $this->todoService->getTodos();
     $this->assertEquals($expected, $todos);
+  }
+
+  #[Test]
+  public function testCreateTodo(): void
+  {
+    $user = User::factory()->create([
+      'id' => self::TEST_USER['id'],
+      'name' => self::TEST_USER['name'],
+      'email' => self::TEST_USER['email'],
+      'password' => self::TEST_USER['password'],
+    ]);
+
+    $todo = $this->todoService->createTodo($user->id, self::TEST_TODO['title'], self::TEST_TODO['content']);
+
+    $expected = [
+      'id' => $todo->getId(),
+      'user_id' => $user->id,
+      'title' => self::TEST_TODO['title'],
+      'content' => self::TEST_TODO['content'],
+      'status' => self::TEST_TODO['status'],
+    ];
+
+    $this->assertEquals($expected, $todo->toArray());
+  }
+
+  #[Test]
+  public function testGetTodo(): void
+  {
+    $user = User::factory()->create([
+      'id' => self::TEST_USER['id'],
+      'name' => self::TEST_USER['name'],
+      'email' => self::TEST_USER['email'],
+      'password' => self::TEST_USER['password'],
+    ]);
+
+    $todo = Todo::factory()->create([
+      'id' => self::TEST_TODO['id'],
+      'user_id' => $user->id,
+      'title' => self::TEST_TODO['title'],
+      'content' => self::TEST_TODO['content'],
+      'status' => self::TEST_TODO['status'],
+    ]);
+
+    $todo = $this->todoService->getTodo(self::TEST_TODO['id']);
+
+    $expected = [
+      'id' => self::TEST_TODO['id'],
+      'user_id' => self::TEST_USER['id'],
+      'title' => self::TEST_TODO['title'],
+      'content' => self::TEST_TODO['content'],
+      'status' => self::TEST_TODO['status'],
+    ];
+
+    $this->assertEquals($expected, $todo->toArray());
+  }
+
+  #[Test]
+  public function testUpdateTodo(): void
+  {
+    $user = User::factory()->create([
+      'id' => self::TEST_USER['id'],
+      'name' => self::TEST_USER['name'],
+      'email' => self::TEST_USER['email'],
+      'password' => self::TEST_USER['password'],
+    ]);
+
+    $todo = Todo::factory()->create([
+      'id' => self::TEST_TODO['id'],
+      'user_id' => $user->id,
+      'title' => self::TEST_TODO['title'],
+      'content' => self::TEST_TODO['content'],
+      'status' => self::TEST_TODO['status'],
+    ]);
+
+    $newTitle = 'new_title';
+    $newContent = 'new_content';
+    $newStatus = 'complete';
+
+    $todo = $this->todoService->updateTodo(self::TEST_TODO['id'], $newTitle, $newContent, $newStatus);
+
+    $expected = [
+      'id' => self::TEST_TODO['id'],
+      'user_id' => self::TEST_USER['id'],
+      'title' => $newTitle,
+      'content' => $newContent,
+      'status' => $newStatus,
+    ];
+
+    $this->assertEquals($expected, $todo->toArray());
   }
 }
