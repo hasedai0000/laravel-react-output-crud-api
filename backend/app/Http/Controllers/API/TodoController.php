@@ -107,10 +107,25 @@ class TodoController extends BaseController
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Todoを削除
+     * 
+     * @param string $id
+     * @return \Illuminate\Http\Response
      */
     public function destroy(string $id)
     {
-        //
+        $todo = $this->todoService->getTodo($id);
+
+        if (!$todo) {
+            return $this->sendError('Todoが見つかりません');
+        }
+
+        try {
+            $this->todoService->deleteTodo($id);
+
+            return $this->sendResponse([], 'Todoを削除しました');
+        } catch (\Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
     }
 }

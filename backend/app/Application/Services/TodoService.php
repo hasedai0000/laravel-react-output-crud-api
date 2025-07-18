@@ -104,4 +104,15 @@ class TodoService
     $this->todoRepository->save($todo);
     return $todo;
   }
+
+  /**
+   * Todoを削除
+   * 
+   * @param string $id
+   * @return void
+   */
+  public function deleteTodo(string $id): void
+  {
+    $this->todoRepository->delete($id);
+  }
 }

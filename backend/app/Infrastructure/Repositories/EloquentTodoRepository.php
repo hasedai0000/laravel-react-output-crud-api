@@ -72,4 +72,19 @@ class EloquentTodoRepository implements TodoRepositoryInterface
       new TodoStatus($eloquentTodo->status)
     );
   }
+
+  /**
+   * Todoを削除
+   * 
+   * @param string $todo_id
+   * @return void
+   */
+  public function delete(string $todo_id): void
+  {
+    $todo = Todo::find($todo_id);
+
+    if ($todo) {
+      $todo->delete();
+    }
+  }
 }

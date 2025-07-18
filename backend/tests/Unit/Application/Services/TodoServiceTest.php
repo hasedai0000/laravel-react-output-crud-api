@@ -68,6 +68,8 @@ class TodoServiceTest extends TestCase
           new TodoContent(self::TEST_TODO['content']),
           new TodoStatus(self::TEST_TODO['status']),
         ));
+
+        $mock->shouldReceive('delete')->andReturn(null);
       }
     );
 
@@ -193,5 +195,28 @@ class TodoServiceTest extends TestCase
     ];
 
     $this->assertEquals($expected, $todo->toArray());
+  }
+
+  #[Test]
+  public function testDeleteTodo(): void
+  {
+    $user = User::factory()->create([
+      'id' => self::TEST_USER['id'],
+      'name' => self::TEST_USER['name'],
+      'email' => self::TEST_USER['email'],
+      'password' => self::TEST_USER['password'],
+    ]);
+
+    $todo = Todo::factory()->create([
+      'id' => self::TEST_TODO['id'],
+      'user_id' => $user->id,
+      'title' => self::TEST_TODO['title'],
+      'content' => self::TEST_TODO['content'],
+      'status' => self::TEST_TODO['status'],
+    ]);
+
+    $this->todoService->deleteTodo($todo->id);
+
+    $this->assertNull(null);
   }
 }

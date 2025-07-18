@@ -163,4 +163,21 @@ class TodoControllerTest extends TestCase
       'Todoを更新しました'
     );
   }
+
+  #[Test]
+  public function testDestroySuccess(): void
+  {
+    $response = $this->deleteJson('api/todos/' . $this->todo->id)
+      ->assertStatus(200)
+      ->assertJsonStructure([
+        'success',
+        'message',
+      ]);
+
+    $this->assertSuccessResponse(
+      $response->json(),
+      [],
+      'Todoを削除しました'
+    );
+  }
 }
